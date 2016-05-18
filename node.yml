@@ -8,6 +8,7 @@
     rancher_agent_version: v1.0.1
     rancher_api_access_key: foo
     rancher_api_access_secret: bar
+    docker-volume-netshare-version: 0.16
 
   tasks:
   - name: Fail if OS distro is not Ubuntu 14.04
@@ -18,8 +19,8 @@
   - name: Configure OpenSSH to listen on port 2020
     lineinfile:
       dest=/etc/ssh/sshd_config
-      regexp=^Port 22
-      line=Port 2020
+      regexp="Port 22"
+      line="Port 2020"
 
   - name: Restart OpenSSH
     service:
@@ -116,3 +117,21 @@
       command: "{{ rancher_token.json['registrationUrl'] }}"
       state: started
     when: "{{ 'rancher-agent' not in containers.stdout }}"
+
+  - name: Install nfs-common
+    apt:
+      name=nfs-common
+      state=present
+
+  - name: Install docker-volume-netshare
+    apt:
+      deb=https://github.com/ContainX/docker-volume-netshare/releases/download/v{{ docker-volume-netshare-version }}/docker-volume-netshare_{{ docker-volume-netshare-version }}_amd64.deb
+      state=present
+
+  - name: Start docker-volume-netshare service
+    service:
+      name=docker-volume-netshare
+      state=started
+
+  - name: Run docker-volume-netshare with nfs option
+    command: screen docker-volume-netshare nfs -o rw,hard,nointr
