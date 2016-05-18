@@ -8,28 +8,39 @@
     rancher_agent_version: v1.0.1
     rancher_api_access_key: foo
     rancher_api_access_secret: bar
-  
+
   tasks:
   - name: Fail if OS distro is not Ubuntu 14.04
-    fail: 
+    fail:
       msg="The role is designed only for Ubuntu 14.04"
     when: "{{ ansible_distribution_version | version_compare('14.04', '!=') }}"
 
+  - name: Configure OpenSSH to listen on port 2020
+    lineinfile:
+      dest=/etc/ssh/sshd_config
+      regexp=^Port 22
+      line=Port 2020
+
+  - name: Restart OpenSSH
+    service:
+      name=ssh
+      state=restarted
+
   - name: Install dependencies
-    apt: 
-      name={{ item }} 
+    apt:
+      name={{ item }}
       update_cache=yes
-    with_items: 
+    with_items:
       - python-dev
       - python-setuptools
-      
+
   - name: Install pip
-    easy_install: 
-      name=pip 
+    easy_install:
+      name=pip
 
   - name: Install docker-py
-    pip: 
-      name=docker-py 
+    pip:
+      name=docker-py
       state=present
       version=1.1.0
 
@@ -49,14 +60,14 @@
       name=docker-engine
       update_cache=yes
   - name: Create a docker group
-    group: 
-      name=docker 
+    group:
+      name=docker
       state=present
 
   - name: Add user(s) to docker group
-    user: 
-      name={{ item }} 
-      group=docker 
+    user:
+      name={{ item }}
+      group=docker
       state=present
     with_items: docker_users
     when: docker_users is defined
@@ -76,7 +87,7 @@
     register: project_id
 
   - name: Return the registration token URL of Rancher server
-    action: uri 
+    action: uri
       method=POST
       status_code=201
       url="http://{{ rancher_server }}:{{ rancher_port }}/v1/registrationtokens?projectId={{ project_id.json['data'][0]['id'] }}" return_content=yes
@@ -85,8 +96,8 @@
     register: rancher_token_url
 
   - name: Return the registration URL of Rancher server
-    action: uri 
-      method=GET 
+    action: uri
+      method=GET
       url={{ rancher_token_url.json['links']['self'] }} return_content=yes
       user="{{ rancher_api_access_key }}"
       password="{{ rancher_api_access_secret }}"
