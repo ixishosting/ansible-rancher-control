@@ -8,7 +8,7 @@
     rancher_agent_version: v1.0.1
     rancher_api_access_key: foo
     rancher_api_access_secret: bar
-    docker-volume-netshare-version: 0.16
+    docker_volume_netshare_version: 0.16
 
   tasks:
   - name: Fail if OS distro is not Ubuntu 14.04
@@ -125,7 +125,7 @@
 
   - name: Install docker-volume-netshare
     apt:
-      deb=https://github.com/ContainX/docker-volume-netshare/releases/download/v{{ docker-volume-netshare-version }}/docker-volume-netshare_{{ docker-volume-netshare-version }}_amd64.deb
+      deb=https://github.com/ContainX/docker-volume-netshare/releases/download/v{{ docker_volume_netshare_version }}/docker-volume-netshare_{{ docker_volume_netshare_version }}_amd64.deb
       state=present
 
   - name: Start docker-volume-netshare service
