@@ -1,0 +1,79 @@
+---
+- hosts: localhost
+  vars:
+    rancher_name: rancher_server
+    rancher_port: 8080
+    rancher_version: v1.0.1
+    rancher_db_host: dbhost.xxx
+    rancher_db_name: dbname
+    rancher_db_user: dbuser
+    rancher_db_pass: dbpass 
+    rancher_db_port: 3306
+    
+  
+  tasks:
+  - name: Fail if OS distro is not Ubuntu 14.04
+    fail: 
+      msg="The role is designed only for Ubuntu 14.04"
+    when: "{{ ansible_distribution_version | version_compare('14.04', '!=') }}"
+
+  - name: Install dependencies
+    apt: 
+      name={{ item }} 
+      update_cache=yes
+    with_items: 
+      - python-dev
+      - python-setuptools
+
+  - name: Install pip
+    easy_install: 
+      name=pip 
+
+  - name: Install docker-py
+    pip: 
+      name=docker-py 
+      state=present
+      version=1.1.0
+
+  - name: Add docker apt repo
+    apt_repository:
+      repo='deb https://apt.dockerproject.org/repo ubuntu-{{ ansible_distribution_release }} main'
+      state=present
+
+  - name: Import the Docker repository key
+    apt_key:
+      url=https://apt.dockerproject.org/gpg
+      state=present
+      id=2C52609D
+
+  - name: Install Docker package
+    apt:
+      name=docker-engine
+      update_cache=yes
+  - name: Create a docker group
+    group: 
+      name=docker 
+      state=present
+
+  - name: Add user(s) to docker group
+    user: 
+      name={{ item }} 
+      group=docker 
+      state=present
+    with_items: docker_users
+    when: docker_users is defined
+
+  - name: Pull and run the Rancher/server container
+    docker:
+      name: "{{ rancher_name }}"
+      image: rancher/server:{{ rancher_version }}
+      restart_policy: always
+      ports: 
+        - "{{ rancher_port }}:8080"
+      env:
+        CATTLE_DB_CATTLE_MYSQL_HOST: "{{ rancher_db_host }}"
+        CATTLE_DB_CATTLE_MYSQL_PORT: "{{ rancher_db_port }}"
+        CATTLE_DB_CATTLE_MYSQL_NAME: "{{ rancher_db_name }}"
+        CATTLE_DB_CATTLE_USERNAME: "{{ rancher_db_user }}"
+        CATTLE_DB_CATTLE_PASSWORD: "{{ rancher_db_pass }}"
+                
