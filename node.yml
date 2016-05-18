@@ -125,7 +125,7 @@
 
   - name: Install docker-volume-netshare
     apt:
-      deb=https://github.com/ContainX/docker-volume-netshare/releases/download/v{{ docker_volume_netshare_version }}/docker-volume-netshare_{{ docker_volume_netshare_version }}_amd64.deb
+      deb=https://github.com/ContainX/docker-volume-netshare/releases/download/v0.16/docker-volume-netshare_0.16_amd64.deb
 
   - name: Start docker-volume-netshare service
     service:
