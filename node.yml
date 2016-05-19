@@ -137,4 +137,4 @@
       state=started
 
   - name: Run docker-volume-netshare with nfs option
-    command: screen docker-volume-netshare nfs -o rw,hard,nointr &
+    command: docker-volume-netshare nfs -o rw,hard,nointr &
