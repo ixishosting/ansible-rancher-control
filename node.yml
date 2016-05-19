@@ -137,6 +137,4 @@
       state=started
 
   - name: Run docker-volume-netshare with nfs option
-    shell: "start-stop-daemon --start --quiet --pidfile /var/run/docker-volume-netshare-nfs.pid --exec docker-volume-netshare nfs -o rw,hard,nointr"
-    args:
-      executable: "/bin/bash"
+    command: "start-stop-daemon --start --quiet --pidfile /var/run/docker-volume-netshare-nfs.pid --exec /usr/bin/docker-volume-netshare nfs -o rw,hard,nointr"
