@@ -150,13 +150,11 @@
   - name: set permissions on swap file
     file:
       path=/swapfile
-      owner=root
-      group=root
       mode=0600
       state=file
 
   - name: make swap file
     command: mkswap /swapfile
 
-  - name: enable swap file
-    command: swapon /swapfile
+  #- name: enable swap file
+  #  command: swapon /swapfile
