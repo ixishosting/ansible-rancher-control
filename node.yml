@@ -143,3 +143,21 @@
 
   - name: Run docker-volume-netshare with nfs option
     command: daemon docker-volume-netshare nfs -o rw,hard,nointr > /var/log/docker-volume-netshare.log
+
+  - name: create swap file
+    command: fallocate -l 2G /swapfile
+      creates=/swapfile
+
+  - name: set permissions on swap file
+    file:
+      path=/swapfile
+      owner=root
+      group=root
+      mode=600
+
+  - name: make swap file
+    command: mkswap /swapfile
+      creates=/swapfile
+
+  - name: enable swap file
+    command: swapon /swapfile
