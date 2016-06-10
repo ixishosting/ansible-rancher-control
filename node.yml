@@ -9,6 +9,7 @@
     rancher_api_access_key: foo
     rancher_api_access_secret: bar
     docker_volume_netshare_version: 0.16
+    swap_size: 2G
 
   tasks:
   - name: Fail if OS distro is not Ubuntu 14.04
@@ -145,7 +146,7 @@
     command: daemon docker-volume-netshare nfs -o rw,hard,nointr > /var/log/docker-volume-netshare.log
 
   - name: allocate swap file
-    command: fallocate -l 2G /swapfile
+    command: fallocate -l {{ swap_size }} /swapfile
 
   - name: set permissions on swap file
     file:
