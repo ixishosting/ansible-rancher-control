@@ -146,12 +146,12 @@
 
   - name: allocate swap file
     command: fallocate -l 2G /swapfile
-#
-  #- name: set permissions on swap file
-  #  file:
-  #    path=/swapfile
-  #    mode=0600
-  #    state=file
+
+  - name: set permissions on swap file
+    file:
+      path=/swapfile
+      mode=0600
+      state=file
 
   #- name: make swap file
   #  command: mkswap /swapfile
