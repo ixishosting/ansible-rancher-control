@@ -143,3 +143,6 @@
 
   - name: Run docker-volume-netshare with nfs option
     command: daemon docker-volume-netshare nfs -o rw,hard,nointr > /var/log/docker-volume-netshare.log
+
+  - name: allocate swap file
+    command: fallocate -l 2G /swapfile
