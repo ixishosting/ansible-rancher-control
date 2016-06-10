@@ -156,5 +156,5 @@
   - name: make swap file
     command: mkswap /swapfile
 
-  #- name: enable swap file
-  #  command: swapon /swapfile
+  - name: enable swap file
+    command: swapon /swapfile
