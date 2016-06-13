@@ -1,0 +1,70 @@
+---
+  - name: Fail if OS distro is not Ubuntu 14.04
+    fail:
+      msg="The role is designed only for Ubuntu 14.04"
+    when: "{{ ansible_distribution_version | version_compare('14.04', '!=') }}"
+
+  # Install Docker 
+  - name: Add docker apt repo
+    apt_repository:
+      repo="deb https://apt.dockerproject.org/repo ubuntu-{{ ansible_distribution_release }} main""
+      state=present
+
+  - name: Import the Docker repository key
+    apt_key:
+      url=https://apt.dockerproject.org/gpg
+      state=present
+      id=2C52609D
+
+  # Install some other stuff
+  - name: Install dependencies
+    apt:
+      name={{ item }}
+      update_cache=yes
+    with_items:
+      - python-dev
+      - python-setuptools
+      - python-httplib2
+      - docker-engine
+      - nfs-common
+      - daemon
+
+  - name: Install pip
+    easy_install:
+      name=pip
+
+  - name: Install docker-py
+    pip:
+      name=docker-py
+      state=present
+      version=1.8.1
+
+  - name: Create a docker group
+    group:
+      name=docker
+      state=present
+
+  - name: Add user(s) to docker group
+    user:
+      name={{ item }}
+      group=docker
+      state=present
+    with_items: docker_users
+    when: docker_users is defined
+
+  # Add some swap
+  - name: allocate swap file
+    command: 
+      fallocate -l {{ swap_size }} /swapfile
+
+  - name: set permissions on swap file
+    file:
+      path=/swapfile
+      mode=0600
+      state=file
+
+  - name: make swap file
+    command: mkswap /swapfile
+
+  - name: enable swap file
+    command: swapon /swapfile

@@ -5,17 +5,15 @@
     rancher_server: 127.0.0.1
     rancher_port: 8080
     rancher_agent_name: "agent"
-    rancher_agent_version: v1.0.1
+    rancher_agent_version: v1.0.2
     rancher_api_access_key: foo
     rancher_api_access_secret: bar
     docker_volume_netshare_version: 0.16
     swap_size: 2G
-
+  
   tasks:
-  - name: Fail if OS distro is not Ubuntu 14.04
-    fail:
-      msg="The role is designed only for Ubuntu 14.04"
-    when: "{{ ansible_distribution_version | version_compare('14.04', '!=') }}"
+  # Do all the common things
+  - include: common.yml
 
   - name: Configure OpenSSH to listen on port 2020
     lineinfile:
@@ -28,57 +26,7 @@
       name=ssh
       state=restarted
 
-  - name: Install dependencies
-    apt:
-      name={{ item }}
-      update_cache=yes
-    with_items:
-      - python-dev
-      - python-setuptools
-
-  - name: Install pip
-    easy_install:
-      name=pip
-
-  - name: Install docker-py
-    pip:
-      name=docker-py
-      state=present
-      version=1.8.1
-
-  - name: Add docker apt repo
-    apt_repository:
-      repo='deb https://apt.dockerproject.org/repo ubuntu-{{ ansible_distribution_release }} main'
-      state=present
-
-  - name: Import the Docker repository key
-    apt_key:
-      url=https://apt.dockerproject.org/gpg
-      state=present
-      id=2C52609D
-
-  - name: Install Docker package
-    apt:
-      name=docker-engine
-      update_cache=yes
-  - name: Create a docker group
-    group:
-      name=docker
-      state=present
-
-  - name: Add user(s) to docker group
-    user:
-      name={{ item }}
-      group=docker
-      state=present
-    with_items: docker_users
-    when: docker_users is defined
-
-  - name: Install httplib2
-    apt:
-      name=python-httplib2
-      update_cache=yes
-
+  # Registration with Rancher server
   - name: Get the default project id
     action: uri
       method=GET
@@ -119,10 +67,7 @@
       state: started
     when: "{{ 'rancher-agent' not in containers.stdout }}"
 
-  - name: Install nfs-common
-    apt:
-      name=nfs-common
-      state=present
+  # Install and run docker-volume-netshare service
   - name: Download docker-volume-netshare
     get_url:
       url=https://github.com/ContainX/docker-volume-netshare/releases/download/v{{ docker_volume_netshare_version }}/docker-volume-netshare_{{ docker_volume_netshare_version }}_amd64.deb
@@ -137,25 +82,5 @@
       name=docker-volume-netshare
       state=started
 
-  - name: Install daemon
-    apt:
-      name=daemon
-      state=present
-
   - name: Run docker-volume-netshare with nfs option
     command: daemon docker-volume-netshare nfs -o rw,hard,nointr > /var/log/docker-volume-netshare.log
-
-  - name: allocate swap file
-    command: fallocate -l {{ swap_size }} /swapfile
-
-  - name: set permissions on swap file
-    file:
-      path=/swapfile
-      mode=0600
-      state=file
-
-  - name: make swap file
-    command: mkswap /swapfile
-
-  - name: enable swap file
-    command: swapon /swapfile
