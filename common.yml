@@ -4,9 +4,10 @@
       msg="The role is designed only for Ubuntu 14.04"
     when: "{{ ansible_distribution_version | version_compare('14.04', '!=') }}"
 
+  # Install Docker 
   - name: Add docker apt repo
     apt_repository:
-      repo="deb https://apt.dockerproject.org/repo ubuntu-{{ ansible_distribution_release }} main""
+      repo="deb https://apt.dockerproject.org/repo ubuntu-{{ ansible_distribution_release }} main"
       state=present
 
   - name: Import the Docker repository key
