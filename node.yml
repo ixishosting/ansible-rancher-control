@@ -84,3 +84,12 @@
 
   - name: Run docker-volume-netshare with nfs option
     command: daemon docker-volume-netshare nfs -o rw,hard,nointr > /var/log/docker-volume-netshare.log
+
+
+  - name: insert/update IAM creds in /etc/docker/default
+    blockinfile:
+      dest: /etc/ssh/sshd_config
+      block: |
+        AWS_ACCESS_KEY_ID = {{ AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY = {{ AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION = {{ AWS_REGION }}
