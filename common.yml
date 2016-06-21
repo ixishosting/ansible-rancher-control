@@ -22,16 +22,7 @@
       name={{ item }}
       update_cache=yes
     with_items:
-      - python-dev
-      - python-setuptools
-      - python-httplib2
       - docker-engine
-      - nfs-common
-      - daemon
-
-  - name: Install pip
-    easy_install:
-      name=pip
 
   - name: Install docker-py
     pip:
