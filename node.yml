@@ -26,7 +26,6 @@
       name=ssh
       state=restarted
 
-
   - name: insert/update IAM creds in /etc/docker/default
     blockinfile:
       dest: /etc/default/docker
@@ -34,7 +33,11 @@
         export AWS_ACCESS_KEY_ID={{ AWS_ACCESS_KEY_ID }}
         export AWS_SECRET_ACCESS_KEY={{ AWS_SECRET_ACCESS_KEY }}
         export AWS_REGION={{ AWS_REGION }}
-
+  
+  - name: restart docker
+    service:
+      name=docker
+      state=restarted
 
   # Registration with Rancher server
   - name: Get the default project id
