@@ -28,4 +28,3 @@
         CATTLE_DB_CATTLE_MYSQL_NAME: "{{ rancher_db_name }}"
         CATTLE_DB_CATTLE_USERNAME: "{{ rancher_db_user }}"
         CATTLE_DB_CATTLE_PASSWORD: "{{ rancher_db_pass }}"
-        CATTLE_HOST_LABELS: "aws.instance_id={{ ansible_ec2_instance_id }}&aws.availability_zone={{ ansible_ec2_placement_availability_zone }}"

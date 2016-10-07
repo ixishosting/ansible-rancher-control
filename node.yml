@@ -77,6 +77,8 @@
       detach: True
       volumes: /var/run/docker.sock:/var/run/docker.sock
       command: "{{ rancher_token.json['registrationUrl'] }}"
+      env:
+        CATTLE_HOST_LABELS: "aws.instance_id={{ ansible_ec2_instance_id }}&aws.availability_zone={{ ansible_ec2_placement_availability_zone }}"
       state: started
     when: "{{ 'rancher-agent' not in containers.stdout }}"
 
