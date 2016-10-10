@@ -1,13 +1,13 @@
 ---
-  - name: Fail if OS distro is not Ubuntu 14.04
+  - name: Fail if OS distro is not Ubuntu 16.04
     fail:
-      msg="The role is designed only for Ubuntu 14.04"
-    when: "{{ ansible_distribution_version | version_compare('14.04', '!=') }}"
+      msg="The role is designed only for Ubuntu 16.04"
+    when: "{{ ansible_distribution_version | version_compare('16.04', '!=') }}"
 
   - name: Gather facts
     action: ec2_facts
 
-  # Install Docker 
+  # Install Docker
   - name: Add docker apt repo
     apt_repository:
       repo="deb https://apt.dockerproject.org/repo ubuntu-{{ ansible_distribution_release }} main"
@@ -48,7 +48,7 @@
 
   # Add some swap
   - name: allocate swap file
-    command: 
+    command:
       fallocate -l {{ swap_size }} /swapfile
 
   - name: set permissions on swap file
@@ -62,4 +62,3 @@
 
   - name: enable swap file
     command: swapon /swapfile
-
