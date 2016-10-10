@@ -3,11 +3,11 @@
   vars:
     rancher_name: rancher_server
     rancher_port: 8080
-    rancher_version: v1.0.2
+    rancher_version: v1.1.4
     rancher_db_host: dbhost.xxx
     rancher_db_name: dbname
     rancher_db_user: dbuser
-    rancher_db_pass: dbpass 
+    rancher_db_pass: dbpass
     rancher_db_port: 3306
     swap_size: 2G
 
@@ -20,7 +20,7 @@
       name: "{{ rancher_name }}"
       image: rancher/server:{{ rancher_version }}
       restart_policy: always
-      ports: 
+      ports:
         - "{{ rancher_port }}:8080"
       env:
         CATTLE_DB_CATTLE_MYSQL_HOST: "{{ rancher_db_host }}"
