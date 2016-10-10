@@ -10,7 +10,7 @@
     rancher_api_access_secret: bar
     docker_volume_netshare_version: 0.18
     swap_size: 2G
-  
+
   tasks:
   # Do all the common things
   - include: common.yml
@@ -33,7 +33,7 @@
         export AWS_ACCESS_KEY_ID={{ AWS_ACCESS_KEY_ID }}
         export AWS_SECRET_ACCESS_KEY={{ AWS_SECRET_ACCESS_KEY }}
         export AWS_REGION={{ AWS_REGION }}
-  
+
   - name: restart docker
     service:
       name=docker
@@ -78,7 +78,7 @@
       volumes: /var/run/docker.sock:/var/run/docker.sock
       command: "{{ rancher_token.json['registrationUrl'] }}"
       env:
-        CATTLE_HOST_LABELS: "aws.instance_id={{ 'ansible_facts.ansible_ec2_instance_id' }}&aws.availability_zone={{ 'ansible_facts.ansible_ec2_instance_id.ansible_ec2_placement_availability_zone' }}"
+        CATTLE_HOST_LABELS: "aws.instance_id={{ 'ansible_facts.ansible_ec2_instance_id' }}&aws.availability_zone={{ 'ansible_facts.ansible_ec2_placement_availability_zone' }}"
       state: started
     when: "{{ 'rancher-agent' not in containers.stdout }}"
 
