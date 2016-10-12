@@ -99,4 +99,4 @@
 
   - name: Run docker-volume-netshare with nfs option
     #command: daemon docker-volume-netshare nfs -o rw,hard,nointr > /var/log/docker-volume-netshare.log
-    command: daemon --command "docker-volume-netshare nfs -o noatime,rw,bg,hard,rsize=32768,wsize=32768,vers=3,nointr,timeo=600,proto=tcp" > /var/log/docker-volume-netshare.log
+    command: daemon --command "docker-volume-netshare nfs -o noatime,nolock,rw,bg,hard,rsize=32768,wsize=32768,vers=3,nointr,timeo=600,proto=tcp" > /var/log/docker-volume-netshare.log
