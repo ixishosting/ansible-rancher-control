@@ -27,6 +27,9 @@
       state=restarted
 
   - name: create docker systemd config file
+    file: path=/etc/systemd/system/docker.service.d/ state=directory
+
+  - name: create docker systemd config file
     file: path=/etc/systemd/system/docker.service.d/aws-credentials.conf state=touch
 
   - name: insert/update IAM creds in /etc/systemd/system/docker.service.d/aws-credentials.conf
