@@ -39,7 +39,7 @@
         Environment="AWS_REGION={{ AWS_REGION }}"
 
   - name: reload systemd configs
-    comamnd: systemctl daemon-reload
+    command: systemctl daemon-reload
 
   - name: restart docker
     service:
