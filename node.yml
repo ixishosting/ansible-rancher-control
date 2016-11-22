@@ -9,7 +9,7 @@
     rancher_api_access_key: foo
     rancher_api_access_secret: bar
     docker_volume_netshare_version: 0.18
-    swap_size: 2G
+    swap_size: 8G
 
   tasks:
   # Do all the common things
