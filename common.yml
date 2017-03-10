@@ -62,3 +62,9 @@
 
   - name: enable swap file
     command: swapon /swapfile
+
+  - name: download ctop
+    get_url:
+      url: https://github.com/bcicen/ctop/releases/download/v0.4.1/ctop-0.4.1-linux-amd64
+      dest: /usr/local/bin/ctop
+      mode: 0755
