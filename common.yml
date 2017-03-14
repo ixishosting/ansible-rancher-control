@@ -25,7 +25,7 @@
       name={{ item }}
       update_cache=yes
     with_items:
-      - docker-engine
+      - docker-engine={{ docker_version }}
 
   - name: Install docker-py
     pip:
