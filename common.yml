@@ -68,3 +68,29 @@
       url: https://github.com/bcicen/ctop/releases/download/v0.4.1/ctop-0.4.1-linux-amd64
       dest: /usr/local/bin/ctop
       mode: 0755
+
+  - name: install cloudwatch monitoring dependencies
+    apt:
+      name: "{{ item }}"
+      state: present
+    with_items:
+      - unzip
+      - libwww-perl
+      - libdatetime-perl
+
+  - name: download and extract cloudwatch monitoring scripts
+    unarchive:
+      src: http://aws-cloudwatch.s3.amazonaws.com/downloads/CloudWatchMonitoringScripts-1.2.1.zip
+      dest: /root/
+      remote_src: yes
+  
+  - name: template aws permissions
+    template:
+      src: awscreds.template
+      dest: /root/aws-scripts-mon/awscreds.conf
+
+  - name: setup cloudwatch push crons
+    cron:
+      name: push metrics to cloudwatch
+      minute: "*/5"
+      job: "cd /root/aws-scripts-mon/ && ./mon-put-instance-data.pl --disk-path=/ --disk-space-util --mem-util --swap-util --from-cron"
