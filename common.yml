@@ -88,3 +88,9 @@
     template:
       src: awscreds.template
       dest: /root/aws-scripts-mon/awscreds.conf
+
+  - name: setup cloudwatch push crons
+    cron:
+      name: push metrics to cloudwatch
+      minute: "*/5"
+      job: "cd /root/aws-scripts-mon/ && ./mon-put-instance-data.pl --disk-path=/ --disk-space-util --mem-util --swap-util --from-cron"
