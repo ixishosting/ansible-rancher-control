@@ -108,11 +108,11 @@
       state=started
       enabled=yes
 
-  - name: Run docker-volume-netshare with nfs option
+  - name: Run docker-volume-netshare with efs option
     #command: daemon docker-volume-netshare nfs -o rw,hard,nointr > /var/log/docker-volume-netshare.log
-    command: daemon --command "docker-volume-netshare nfs -o actimeo=0,noatime,nolock,rw,bg,hard,rsize=32768,wsize=32768,vers=3,nointr,timeo=600,proto=tcp" > /var/log/docker-volume-netshare.log
+    command: daemon --command "docker-volume-netshare efs -o actimeo=0,noatime,nolock,rw,bg,hard,rsize=32768,wsize=32768,vers=3,nointr,timeo=600,proto=tcp" > /var/log/docker-volume-netshare.log
 
-  - name: restart docker-volume-netshare with nfs option on reboot
+  - name: restart docker-volume-netshare with efs option on reboot
     cron:
       special_time: reboot
-      job: daemon --command "docker-volume-netshare nfs -o actimeo=0,noatime,nolock,rw,bg,hard,rsize=32768,wsize=32768,vers=3,nointr,timeo=600,proto=tcp" > /var/log/docker-volume-netshare.log
+      job: daemon --command "docker-volume-netshare efs -o actimeo=0,noatime,nolock,rw,bg,hard,rsize=32768,wsize=32768,vers=3,nointr,timeo=600,proto=tcp" > /var/log/docker-volume-netshare.log
