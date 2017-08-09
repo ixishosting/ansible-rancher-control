@@ -101,6 +101,18 @@
   - name: Install docker-volume-netshare
     apt:
       deb=/tmp/docker-volume-netshare_{{ docker_volume_netshare_version }}_amd64.deb
+  
+  - name: disable netshare nfs
+    replace:
+      path: /etc/default/docker-volume-netshare
+      regexp: 'DKV_NETSHARE_OPTS="nfs"'
+      replace: '#DKV_NETSHARE_OPTS="nfs"'
+
+  - name: enable netshare efs
+    replace:
+      path: /etc/default/docker-volume-netshare
+      regexp: '#DKV_NETSHARE_OPTS="efs --nameserver=169.254.169.253"'
+      replace: 'DKV_NETSHARE_OPTS="efs --nameserver=169.254.169.253"'
 
   - name: Start docker-volume-netshare service
     service:
