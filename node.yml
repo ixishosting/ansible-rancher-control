@@ -4,50 +4,11 @@
     remote_user: root
     rancher_server: 127.0.0.1
     rancher_port: 8080
-    rancher_agent_name: "agent"
     rancher_agent_version: v1.0.2
     rancher_api_access_key: foo
     rancher_api_access_secret: bar
-    docker_volume_netshare_version: 0.34
-    swap_size: 8G
 
   tasks:
-  # Do all the common things
-  - include: common.yml
-
-  - name: Configure OpenSSH to listen on port 2020
-    lineinfile:
-      dest=/etc/ssh/sshd_config
-      regexp="Port 22"
-      line="Port 2020"
-
-  - name: Restart OpenSSH
-    service:
-      name=ssh
-      state=restarted
-
-  - name: create docker systemd config file
-    file: path=/etc/systemd/system/docker.service.d/ state=directory
-
-  - name: create docker systemd config file
-    file: path=/etc/systemd/system/docker.service.d/aws-credentials.conf state=touch
-
-  - name: insert/update IAM creds in /etc/systemd/system/docker.service.d/aws-credentials.conf
-    blockinfile:
-      dest: /etc/systemd/system/docker.service.d/aws-credentials.conf
-      block: |
-        [Service]
-        Environment="AWS_ACCESS_KEY_ID={{ AWS_ACCESS_KEY_ID }}"
-        Environment="AWS_SECRET_ACCESS_KEY={{ AWS_SECRET_ACCESS_KEY }}"
-        Environment="AWS_REGION={{ AWS_REGION }}"
-
-  - name: reload systemd configs
-    command: systemctl daemon-reload
-
-  - name: restart docker
-    service:
-      name=docker
-      state=restarted
 
   # Registration with Rancher server
   - name: Get the default project id
@@ -91,40 +52,3 @@
         CATTLE_HOST_LABELS: "aws.instance_id={{ ansible_ec2_instance_id }}&aws.availability_zone={{ ansible_ec2_placement_availability_zone }}"
       state: started
     when: "{{ 'rancher-agent' not in containers.stdout }}"
-
-  # Install and run docker-volume-netshare service
-  - name: Download docker-volume-netshare
-    get_url:
-      url=https://github.com/ContainX/docker-volume-netshare/releases/download/v{{ docker_volume_netshare_version }}/docker-volume-netshare_{{ docker_volume_netshare_version }}_amd64.deb
-      dest=/tmp/docker-volume-netshare_{{ docker_volume_netshare_version }}_amd64.deb
-
-  - name: Install docker-volume-netshare
-    apt:
-      deb=/tmp/docker-volume-netshare_{{ docker_volume_netshare_version }}_amd64.deb
-  
-  - name: disable netshare nfs
-    replace:
-      path: /etc/default/docker-volume-netshare
-      regexp: 'DKV_NETSHARE_OPTS="nfs"'
-      replace: '#DKV_NETSHARE_OPTS="nfs"'
-
-  - name: enable netshare efs
-    replace:
-      path: /etc/default/docker-volume-netshare
-      regexp: '#DKV_NETSHARE_OPTS="efs --nameserver=169.254.169.253"'
-      replace: 'DKV_NETSHARE_OPTS="efs --nameserver=169.254.169.253"'
-
-  - name: Start docker-volume-netshare service
-    service:
-      name=docker-volume-netshare
-      state=started
-      enabled=yes
-
-  - name: Run docker-volume-netshare with efs option
-    #command: daemon docker-volume-netshare nfs -o rw,hard,nointr > /var/log/docker-volume-netshare.log
-    command: daemon --command "docker-volume-netshare efs" > /var/log/docker-volume-netshare.log
-
-  - name: restart docker-volume-netshare with efs option on reboot
-    cron:
-      special_time: reboot
-      job: daemon --command "docker-volume-netshare efs" > /var/log/docker-volume-netshare.log
