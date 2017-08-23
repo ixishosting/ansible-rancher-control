@@ -9,7 +9,6 @@
     rancher_db_user: dbuser
     rancher_db_pass: dbpass
     rancher_db_port: 3306
-    swap_size: 8G
 
   tasks:
   # Do all the common things
