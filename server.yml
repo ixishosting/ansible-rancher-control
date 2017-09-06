@@ -11,8 +11,6 @@
     rancher_db_port: 3306
 
   tasks:
-  # Do all the common things
-  - include: common.yml
 
   - name: Pull and run the Rancher/server container
     docker:
