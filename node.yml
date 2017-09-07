@@ -10,6 +10,9 @@
 
   tasks:
 
+  - name: Gather facts
+    action: ec2_facts
+
   # Registration with Rancher server
   - name: Get the default project id
     action: uri
