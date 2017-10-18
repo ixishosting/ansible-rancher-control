@@ -12,6 +12,69 @@
 
   - name: Gather facts
     action: ec2_facts
+  
+  - name: setup disk alarm
+    ec2_metric_alarm:
+      state: present
+      region: "{{ ansible_ec2_placement_region }}"
+      name: "disk-alarm-{{ ansible_ec2_instance_id }}"
+      metric: "DiskSpaceUtilization"
+      namespace: "System/Linux"
+      statistic: Average
+      comparison: ">="
+      threshold: "90.0"
+      period: 300
+      evaluation_periods: 3
+      unit: "Percent"
+      description: "When disk usage is greater than 80% for instance {{ ansible_ec2_instance_id }}"
+      dimensions: {'Filesystem':'/dev/xvda1','InstanceId':'{{ ansible_ec2_instance_id }}','MountPath':'/'}
+      alarm_actions: ["{{ sns_alarm_action }}"]
+    environment:
+      EC2_SECRET_KEY: "{{ cloudwatch_aws_secret_key }}"
+      EC2_ACCESS_KEY: "{{ cloudwatch_aws_access_key_id }}"
+      AWS_REGION: "{{ ansible_ec2_placement_region }}"
+
+  - name: setup memory alarm
+    ec2_metric_alarm:
+      state: present
+      region: "{{ ansible_ec2_placement_region }}"
+      name: "memory-alarm-{{ ansible_ec2_instance_id }}-{{ ansible_nodename }}"
+      metric: "MemoryUtilization"
+      namespace: "System/Linux"
+      statistic: Average
+      comparison: ">="
+      threshold: "95.0"
+      period: 300
+      evaluation_periods: 3
+      unit: "Percent"
+      description: "When memory usage is greater than 95% for instance {{ ansible_ec2_instance_id }}"
+      dimensions: {'InstanceId':'{{ ansible_ec2_instance_id }}'}
+      alarm_actions: ["{{ sns_alarm_action }}"]
+    environment:
+      EC2_SECRET_KEY: "{{ cloudwatch_aws_secret_key }}"
+      EC2_ACCESS_KEY: "{{ cloudwatch_aws_access_key_id }}"
+      AWS_REGION: "{{ ansible_ec2_placement_region }}"
+  
+  - name: setup cpu alarm
+    ec2_metric_alarm:
+      state: present
+      region: "{{ ansible_ec2_placement_region }}"
+      name: "cpu-alarm-{{ ansible_ec2_instance_id }}-{{ ansible_nodename }}"
+      metric: "CPUUtilization"
+      namespace: "AWS/EC2"
+      statistic: Average
+      comparison: ">="
+      threshold: "95.0"
+      period: 300
+      evaluation_periods: 3
+      unit: "Percent"
+      description: "When cpu usage is greater than 95% for instance {{ ansible_ec2_instance_id }}"
+      dimensions: {'InstanceId':'{{ ansible_ec2_instance_id }}'}
+      alarm_actions: ["{{ sns_alarm_action }}"]
+    environment:
+      EC2_SECRET_KEY: "{{ cloudwatch_aws_secret_key }}"
+      EC2_ACCESS_KEY: "{{ cloudwatch_aws_access_key_id }}"
+      AWS_REGION: "{{ ansible_ec2_placement_region }}"
 
   # Registration with Rancher server
   - name: Get the default project id
