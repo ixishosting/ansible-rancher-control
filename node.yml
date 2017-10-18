@@ -38,7 +38,7 @@
     ec2_metric_alarm:
       state: present
       region: "{{ ansible_ec2_placement_region }}"
-      name: "memory-alarm-{{ ansible_ec2_instance_id }}-{{ ansible_nodename }}"
+      name: "memory-alarm-{{ ansible_ec2_instance_id }}"
       metric: "MemoryUtilization"
       namespace: "System/Linux"
       statistic: Average
@@ -59,7 +59,7 @@
     ec2_metric_alarm:
       state: present
       region: "{{ ansible_ec2_placement_region }}"
-      name: "cpu-alarm-{{ ansible_ec2_instance_id }}-{{ ansible_nodename }}"
+      name: "cpu-alarm-{{ ansible_ec2_instance_id }}"
       metric: "CPUUtilization"
       namespace: "AWS/EC2"
       statistic: Average
