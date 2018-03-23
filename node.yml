@@ -90,7 +90,7 @@
       env:
         CATTLE_HOST_LABELS: "aws.instance_id={{ ansible_ec2_instance_id }}&aws.availability_zone={{ ansible_ec2_placement_availability_zone }}"
       state: started
-    when: "{{ 'rancher-agent' not in containers.stdout }}"
+    when: "'rancher-agent' not in containers.stdout"
 
   # Install and run docker-volume-netshare service
   - name: Download docker-volume-netshare
