@@ -3,7 +3,7 @@
   vars:
     remote_user: root
     rancher_server: 127.0.0.1
-    rancher_port: 8080
+    rancher_port: 443
     rancher_agent_name: "agent"
     rancher_agent_version: v1.0.2
     rancher_api_access_key: foo
@@ -54,7 +54,7 @@
     action: uri
       method=GET
       status_code=200
-      url="http://{{ rancher_server }}:{{ rancher_port }}/v1/projects" return_content=yes
+      url="https://{{ rancher_server }}/v1/projects" return_content=yes
       user="{{ rancher_api_access_key }}"
       password="{{ rancher_api_access_secret }}"
     register: project_id
@@ -63,7 +63,7 @@
     action: uri
       method=POST
       status_code=201
-      url="http://{{ rancher_server }}:{{ rancher_port }}/v1/registrationtokens?projectId={{ project_id.json['data'][0]['id'] }}" return_content=yes
+      url="https://{{ rancher_server }}/v1/registrationtokens?projectId={{ project_id.json['data'][0]['id'] }}" return_content=yes
       user="{{ rancher_api_access_key }}"
       password="{{ rancher_api_access_secret }}"
     register: rancher_token_url
