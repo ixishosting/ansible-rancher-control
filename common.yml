@@ -101,3 +101,8 @@
       name: push metrics to cloudwatch
       minute: "*/5"
       job: "cd /root/aws-scripts-mon/ && ./mon-put-instance-data.pl --disk-path=/ --disk-space-util --mem-util --swap-util --from-cron"
+
+  - name: Copy limits.conf config template
+    template: src=limits.conf.j2 dest=/etc/security/limits.conf
+
+  - lineinfile: dest=/etc/pam.d/common-session line="session required pam_limits.so"
