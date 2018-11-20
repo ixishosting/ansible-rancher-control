@@ -27,10 +27,9 @@
       state=restarted
 
   - name: Copy daemon.json for overlay
-    template:
-      src: daemon.json
+    lineinfile:
       dest: /etc/docker/daemon.json
-      newline_sequence: '\r\n'
+      line: '{  "storage-driver": "overlay2" }'
 
   - name: create docker systemd config file
     file: path=/etc/systemd/system/docker.service.d/ state=directory
