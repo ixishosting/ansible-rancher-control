@@ -30,6 +30,8 @@
     lineinfile:
       dest: /etc/docker/daemon.json
       line: '{  "storage-driver": "overlay2" }'
+      state: present
+      create: yes
 
   - name: create docker systemd config file
     file: path=/etc/systemd/system/docker.service.d/ state=directory
