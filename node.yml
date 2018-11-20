@@ -26,6 +26,12 @@
       name=ssh
       state=restarted
 
+  - name: Copy daemon.json for overlay
+    template:
+      src: daemon.json
+      dest: /etc/docker/daemon.json
+      newline_sequence: '\r\n'
+
   - name: create docker systemd config file
     file: path=/etc/systemd/system/docker.service.d/ state=directory
 
