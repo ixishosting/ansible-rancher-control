@@ -46,6 +46,12 @@
     with_items: docker_users
     when: docker_users is defined
 
+  - name: Copy daemon.json for overlay
+    template:
+      src: daemon.json
+      dest: /etc/docker/daemon.json
+      newline_sequence: '\r\n'
+
   # Add some swap
   - name: allocate swap file
     command:
